@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../repositories/students_repository.dart';
+import 'package:ogrenci_app/models/student.dart';
 
 class StudentsPage extends ConsumerWidget {
   const StudentsPage({Key? key}) : super(key: key);

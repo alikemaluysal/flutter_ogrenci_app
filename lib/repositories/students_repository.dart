@@ -1,6 +1,7 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ogrenci_app/models/student.dart';
+
 
 class StudentsRepository extends ChangeNotifier{
   List<Student> students =[
@@ -28,12 +29,4 @@ final studentsProvider = ChangeNotifierProvider((ref){
   return StudentsRepository();
 });
 
-class Student{
-  String firstName;
-  String lastName;
-  int age;
-  String gender;
-  Student(this.firstName,this.lastName,this.age,this.gender);
-
-}
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../repositories/teachers_repository.dart';
+import 'package:ogrenci_app/models/teacher.dart';
 
 
 class TeachersPage extends ConsumerWidget {
@@ -19,11 +20,16 @@ class TeachersPage extends ConsumerWidget {
             PhysicalModel(
               color: Colors.white,
               elevation: 20,
-              child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 32.0, horizontal: 32.0),
-                  child: Text("${teachersRepository.teachers.length} Öğretmen"),
-                ),
+              child: Column(
+                children: [
+                  Center(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 32.0, horizontal: 32.0),
+                      child: Text("${teachersRepository.teachers.length} Öğretmen"),
+                    ),
+                  ),
+                  TeacherDownloadButton()
+                ],
               ),
             ),
             Expanded(
@@ -37,6 +43,50 @@ class TeachersPage extends ConsumerWidget {
           ],
         ));
 
+  }
+}
+
+class TeacherDownloadButton extends StatefulWidget {
+  const TeacherDownloadButton({
+    super.key,
+  });
+
+  @override
+  State<TeacherDownloadButton> createState() => _TeacherDownloadButtonState();
+}
+
+class _TeacherDownloadButtonState extends State<TeacherDownloadButton> {
+   bool isLoading = false;
+  @override
+  Widget build(BuildContext context) {
+    return Consumer(
+      builder: (context, ref, child) {
+        return isLoading ? CircularProgressIndicator() : IconButton(onPressed: () async {
+
+          //TODO loading
+          //TODO error
+          try{
+            setState(() {
+              isLoading = true;
+
+            });
+
+          await ref.read(teachersProvider).download();
+          }
+          catch(e){
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(e.toString()))
+            );
+          }
+          finally{
+          setState(() {
+          isLoading = false;
+          });
+          }
+
+        }, icon: const Icon(Icons.download));
+      }
+    );
   }
 }
 
