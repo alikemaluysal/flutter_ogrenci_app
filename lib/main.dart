@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ogrenci_app/pages/messages_page.dart';
 import 'package:ogrenci_app/pages/students_page.dart';
 import 'package:ogrenci_app/pages/teachers_page.dart';
@@ -7,7 +8,7 @@ import 'package:ogrenci_app/repositories/students_repository.dart';
 import 'package:ogrenci_app/repositories/teachers_repository.dart';
 
 void main() {
-  runApp(const StudentApp());
+  runApp(const ProviderScope(child: const StudentApp()));
 }
 
 class StudentApp extends StatelessWidget {
@@ -20,29 +21,21 @@ class StudentApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const HomePage(title: 'Öğrenci Uygulaması Ana Sayfa'),
+      home:  HomePage(title: 'Öğrenci Uygulaması Ana Sayfa'),
     );
   }
 }
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key, required this.title});
+class HomePage extends ConsumerWidget {
+  HomePage({super.key, required this.title});
 
   final String title;
 
   @override
-  State<HomePage> createState() => _HomePageState();
-
-}
-
-class _HomePageState extends State<HomePage> {
-
-  var messagesRepository = new MessagesRepository();
-  var studentsRepository = new StudentsRepository();
-  var teachersRepository = new TeachersRepository();
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final studentsRepository = ref.watch(studentsProvider);
+    final teachersRepository =  ref.watch(teachersProvider);
+    final messagesRepository =  ref.watch(messagesProvider);
     return Scaffold(
       drawer: Drawer(
         child: ListView(
@@ -59,7 +52,7 @@ class _HomePageState extends State<HomePage> {
               onTap: () {
                 Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) {
-                    return StudentsPage(studentsRepository);
+                    return const StudentsPage();
                   },
                 ));
               },
@@ -69,7 +62,7 @@ class _HomePageState extends State<HomePage> {
               onTap: () {
                 Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) {
-                    return TeachersPage(teachersRepository);
+                    return const TeachersPage();
                   },
                 ));
               },
@@ -79,7 +72,7 @@ class _HomePageState extends State<HomePage> {
               onTap: () {
                 Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) {
-                    return MessagesPage(messagesRepository);
+                    return const MessagesPage();
                   },
                 ));
               },
@@ -88,7 +81,7 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text(title),
       ),
       body: Center(
           child: Column(
@@ -98,7 +91,7 @@ class _HomePageState extends State<HomePage> {
                   onPressed: () {
                     Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) {
-                        return StudentsPage(studentsRepository);
+                        return const StudentsPage();
                       },
                     ));
                   },
@@ -107,7 +100,7 @@ class _HomePageState extends State<HomePage> {
                   onPressed: () {
                     Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) {
-                        return TeachersPage(teachersRepository);
+                        return const TeachersPage();
                       },
                     ));
                   },
@@ -116,11 +109,11 @@ class _HomePageState extends State<HomePage> {
                   onPressed: () {
                     Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) {
-                        return MessagesPage(messagesRepository);
+                        return const MessagesPage();
                       },
                     ));
                   },
-                  child: Text("${messagesRepository.messages.length} yeni mesaj"))
+                  child: Text("${ref.watch(newMessageCountProvider)} yeni mesaj"))
             ],
           ),
         ),
